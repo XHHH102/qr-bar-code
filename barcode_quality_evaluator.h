@@ -27,17 +27,6 @@ extern "C" {
 		double y;
 	} Point;
 
-	typedef struct
-	{
-		int dec_res; // 解码结果
-		int sc_rmax; // 最大亮度值
-		int sc_rmin; // 最小亮度值
-		int an_xavg; // 横向单元平均尺寸
-		int an_yavg; // 纵向单元平均尺寸
-		int gn_hmax; // 最大位移量
-		int gn_x;    // 单元尺寸
-	} InputParameter_t;
-
 	typedef enum
 	{
 		GRADE_ERR = -1,

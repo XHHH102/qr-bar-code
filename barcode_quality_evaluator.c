@@ -9,19 +9,19 @@ double calculate_distance(double x1, double y1, double x2, double y2)
 	return val;
 }
 
-int get_min_max_coord(int x1, int x2, int x3, int x4, int flag)
+int get_min_max_coord(const double x1, const double x2, const double x3, const double x4, int flag)
 {
 	int temp12 = 0, temp34 = 0;
 	if (flag)
 	{
-		temp12 = x1 >= x2 ? x1 : x2;
-		temp34 = x3 >= x4 ? x3 : x4;
+		temp12 = (int)(x1 >= x2 ? x1 : x2);
+		temp34 = (int)(x3 >= x4 ? x3 : x4);
 		return temp12 >= temp34 ? temp12 : temp34;
 	}
 	else
 	{
-		temp12 = x1 <= x2 ? x1 : x2;
-		temp34 = x3 <= x4 ? x3 : x4;
+		temp12 = (int)(x1 <= x2 ? x1 : x2);
+		temp34 = (int)(x3 <= x4 ? x3 : x4);
 		return temp12 <= temp34 ? temp12 : temp34;
 	}
 }
@@ -72,10 +72,11 @@ int get_min_max_gray_value_of_points(CodeLevelInfo* codeLevelInfo, int* sc_rmax,
 
 	int brightness_max = BRIGHTNESS_MAX;
 	int brightness_min = BRIGHTNESS_MIN;
+	int y = 0, x = 0;
 
-	for (int y = y_start; y <= y_end; y++)
+	for (y = y_start; y <= y_end; y++)
 	{
-		for (int x = x_start; x <= x_end; x++)
+		for (x = x_start; x <= x_end; x++)
 		{
 			Point p = { x, y };
 			if (!is_point_in_polygon(p, polygon, n))
@@ -83,7 +84,7 @@ int get_min_max_gray_value_of_points(CodeLevelInfo* codeLevelInfo, int* sc_rmax,
 				continue;
 			}
 			int index = y * codeLevelInfo->img.cols + x;
-			if (index < codeLevelInfo->img.cols * codeLevelInfo->img.rows)
+			if (index < (int)(codeLevelInfo->img.cols * codeLevelInfo->img.rows))
 			{
 				unsigned char brightness = codeLevelInfo->img.data[index];
 				if (brightness > brightness_max) {
@@ -143,10 +144,10 @@ int get_modlue_size(CodeLevelInfo* codeLevelInfo, int* x_avg, int* y_avg)
 	int distance_count_x = 0;
 	double total_distance_y = 0.0;
 	int distance_count_y = 0;
-
-	for (int i = 0; i < N; i++)
+	int i = 0, j = 0;
+	for (i = 0; i < N; i++)
 	{
-		for (int j = 0; j < M - 1; j++)
+		for (j = 0; j < M - 1; j++)
 		{
 			double x1 = codeLevelInfo->module_position[i * M + j].x;
 			double y1 = codeLevelInfo->module_position[i * M + j].y;
@@ -156,10 +157,9 @@ int get_modlue_size(CodeLevelInfo* codeLevelInfo, int* x_avg, int* y_avg)
 			distance_count_x++;
 		}
 	}
-
-	for (int j = 0; j < M; j++)
+	for (j = 0; j < M; j++)
 	{
-		for (int i = 1; i < N - 1; i++)
+		for (i = 1; i < N - 1; i++)
 		{
 			double x1 = codeLevelInfo->module_position[i * M + j].x;
 			double y1 = codeLevelInfo->module_position[i * M + j].y;
@@ -170,8 +170,8 @@ int get_modlue_size(CodeLevelInfo* codeLevelInfo, int* x_avg, int* y_avg)
 		}
 	}
 
-	*x_avg = distance_count_x > 0 ? total_distance_x / distance_count_x : 0;
-	*y_avg = distance_count_y > 0 ? total_distance_y / distance_count_y : 0;
+	*x_avg = (int)(distance_count_x > 0 ? total_distance_x / distance_count_x : 0);
+	*y_avg = (int)(distance_count_y > 0 ? total_distance_y / distance_count_y : 0);
 	return 1;
 }
 
@@ -242,10 +242,10 @@ Grade_t evaluate_grid_nonuniformity_grade(CodeLevelInfo* codeLevelInfo, double* 
 	double angles[] = { angle1, angle2, angle3, angle4 };
 	double difference_max = 0;
 	double x = angles[0];
-
-	for (int i = 0; i < 4; i++) {
-		if (abs(angles[i] - 90) > difference_max) {
-			difference_max = abs(angles[i] - 90);
+	int i = 0;
+	for (i = 0; i < 4; i++) {
+		if (abs((int)(angles[i] - 90)) > difference_max) {
+			difference_max = abs((int)(angles[i] - 90));
 		}
 	}
 
@@ -283,9 +283,10 @@ int get_image_gt_sc_value(CodeLevelInfo* codeLevelInfo, double* gt, double* sc)
 	int num_w_count = 0; // °×Ä£¿éÊýÁ¿
 	double total_sumb = 0, total_sumw = 0, avg_sumb = 0, avg_sumw = 0;
 	// Ê×ÏÈ¼ÆËãºÚÄ£¿éºÍ°×Ä£¿éµÄ»Ò¶ÈÖµ
-	for (int m = 0; m < codeLevelInfo->code_vision[1]; m++)
+	int m = 0, n = 0;
+	for (m = 0; m < codeLevelInfo->code_vision[1]; m++)
 	{
-		for (int n = 0; n < codeLevelInfo->code_vision[0]; n++)
+		for (n = 0; n < codeLevelInfo->code_vision[0]; n++)
 		{
 			int type = codeLevelInfo->module_position[m * codeLevelInfo->code_vision[0] + n].type;
 			int x = codeLevelInfo->module_position[m * codeLevelInfo->code_vision[0] + n].x;
@@ -348,13 +349,13 @@ Grade_t evaluate_modulation_grade(CodeLevelInfo* codeLevelInfo, double* val)
 	{
 		return GRADE_ERR;
 	}
-
-	for (int m = 0; m < codeLevelInfo->code_vision[1]; m++)
+	int m = 0, n = 0;
+	for (m = 0; m < codeLevelInfo->code_vision[1]; m++)
 	{
-		for (int n = 0; n < codeLevelInfo->code_vision[0]; n++)
+		for (n = 0; n < codeLevelInfo->code_vision[0]; n++)
 		{
 			int R = codeLevelInfo->module_position[m * codeLevelInfo->code_vision[0] + n].type == 0 ? 0 : 255;
-			double modulation = 2.0 * abs(R - gt) / sc;
+			double modulation = 2.0 * abs((int)(R - gt)) / sc;
 			if (min_modulation > modulation) {
 				min_modulation = modulation;
 			}
@@ -388,9 +389,10 @@ Grade_t evaluate_modulation_grade(CodeLevelInfo* codeLevelInfo, double* val)
 int check_qr_finder_pattern(CodeLevelInfo* codeLevelInfo, int x, int y)
 {
 	int err_num = 0;
-	for (int m = x; m < x + 7; m++)
+	int m = 0, n = 0;
+	for ( m = x; m < x + 7; m++)
 	{
-		for (int n = y; n < y + 7; n++)
+		for (n = y; n < y + 7; n++)
 		{
 			int qr_finder_val = qr_finder_pattern[m - x][n - y];
 			int gray = codeLevelInfo->module_position[n * codeLevelInfo->code_vision[0] + m].type > 0 ? 1 : 0;
@@ -457,15 +459,16 @@ int get_dm_finder_pattern_err_num(CodeLevelInfo* codeLevelInfo)
 	int num_b = 0; // ºÚÄ£¿é¸öÊý
 	int num_w = 0; // °×Ä£¿é¸öÊý
 	int num_err = 0; // Ä£¿é´íÎó¸öÊý
-	for (int n = 0; n < N; n++)
+	int n = 0;
+	for (n = 0; n < N; n++)
 	{
 		// ÌáÈ¡×ó²àºÚ°×µãÊý¾Ý
 		codeLevelInfo->module_position[n * M].type > 0 ? num_w++ : num_b++;
 		// ÌáÈ¡ÓÒ²àºÚ°×µãÊý¾Ý
 		codeLevelInfo->module_position[n * M + M - 1].type > 0 ? num_w++ : num_b++;
 	}
-
-	for (int m = 0; m < M; m++)
+	int m = 0;
+	for (m = 0; m < M; m++)
 	{
 		if (m != 0 && m != M - 1)
 		{
@@ -557,7 +560,8 @@ Grade_t evaluate_unused_error_correction_grage(CodeLevelInfo* codeLevelInfo, dou
 int find_most_frequent_gray_in_range(int *histogram, int start, int end, int *max_count)
 {
 	int most_gray = start;
-	for (int i = start; i < end; i++)
+	int i = 0;
+	for (i = start; i < end; i++)
 	{
 		if (histogram[i] > *max_count)
 		{
@@ -570,13 +574,14 @@ int find_most_frequent_gray_in_range(int *histogram, int start, int end, int *ma
 }double calculate_mean_std(int* histogram, int start, int end, int* total_pixels, double* sigma) {
 	double sum_of_squared_diff = 0;
 	int total_value = 0;
-	for (int i = start; i < end; i++)
+	int i = 0;
+	for (i = start; i < end; i++)
 	{
 		*total_pixels += histogram[i];
 		total_value += histogram[i] * i;
 	}
 	double mean = (double)total_value / *total_pixels;
-	for (int i = start; i < end; i++)
+	for (i = start; i < end; i++)
 	{
 		if (histogram[i] > 0)
 		{
@@ -586,8 +591,6 @@ int find_most_frequent_gray_in_range(int *histogram, int start, int end, int *ma
 	double variance = sum_of_squared_diff / *total_pixels;
 	*sigma = (int)sqrt(variance);
 	if (*sigma == 0) *sigma = 1;
-	if (*sigma == 0) *sigma = 1;
-
 	return mean;
 }
 
@@ -600,14 +603,15 @@ int count_nearby_pixels(int* histogram, int start, int end, int most_gray) {
 	int e = (int)(most_gray + sigma * 3);
 	s = s > start ? s : start;
 	e = e < end ? e : end;
-	for (int i = s; i <= e; i++)
+	int i = 0;
+	for (i = s; i <= e; i++)
 	{
 		count += histogram[i];
 	}
 
 	return count;
 }
-double calculate_histogram(int* histogram, int* range_count)
+int calculate_histogram(int* histogram, int* range_count)
 {
 	int start = 0, end = 256, total_pixels = 0;
 	double sigma = 0;
@@ -617,7 +621,8 @@ double calculate_histogram(int* histogram, int* range_count)
 	s = s > start ? s : start;
 	e = e < end ? e : end;
 	int temp_sum_mean_gray = 0;
-	for (int i = s; i <= e; i++)
+	int i = 0;
+	for (i = s; i <= e; i++)
 	{
 		temp_sum_mean_gray += histogram[i];
 	}
@@ -652,44 +657,15 @@ double calculate_histogram(int* histogram, int* range_count)
 
 int get_growth_value(iMat* img, PointInfo p1, PointInfo p2, double* s0, double* s1)
 {	
-	/*double all_gray = 0, th_gray = 0;
-	int count_black = 0, count_white = 0;
-	double t, distance = calculate_distance(p1.x, p1.y, p2.x, p2.y) / 2;
-	int dx = abs(p1.x - p2.x);
-	int dy = abs(p1.y - p2.y);
-	int step = dx >= dy ? dx : dy;
-	for (int i = 0; i <= step; i++) {
-		t = (double)i / step;
-		int x = (int)(p1.x + t * (p2.x - p1.x));
-		int y = (int)(p1.y + t * (p2.y - p1.y));
-		all_gray += img->data[img->cols * y + x];
-	}
-	th_gray = all_gray / (step + 1);
-	for (int i = 0; i <= step; i++) {
-		t = (double)i / step;
-		int x = (int)(p1.x + t * (p2.x - p1.x));
-		int y = (int)(p1.y + t * (p2.y - p1.y));
-		if (img->data[img->cols * y + x] <= th_gray) {
-			count_black++;
-		}
-		else {
-			count_white++;
-		}
-	}
-	if (count_black == 0 || count_white == 0)return 0;
-	double b_w_ratio = (double)count_black / count_white;
-	double w_b_ratio = (double)count_white / count_black;
-	double ratio = b_w_ratio >= w_b_ratio ? b_w_ratio : w_b_ratio;
-	ratio -= 1;
-	*s0 = ratio > *s0 ? ratio : *s0;*/
 	int distance = (int)(calculate_distance(p1.x, p1.y, p2.x, p2.y) / 3.5);
 	int histogram1[257], histogram2[257];
+	int i = 0;
 	for (int i = 0; i < 257; i++)
 	{
 		histogram1[i] = 0;
 		histogram2[i] = 0;
 	}
-	for (int i = -distance; i <= distance; i++)
+	for (i = -distance; i <= distance; i++)
 	{
 		for (int j = -distance; j <= distance; j++)
 		{
@@ -723,6 +699,7 @@ Grade_t evaluate_dm_print_growth_grade(CodeLevelInfo* codeLevelInfo)
 	int M = codeLevelInfo->code_vision[0]; // Ä£¿éÐÐÊý
 	int N = codeLevelInfo->code_vision[1]; // Ä£¿éÁÐÊý
 	int rc = 0;
+	int i = 0, n = 0;
 	// 1¡¢¼ÆËã¶¥²¿´òÓ¡Ôö³¤ÂÊ
 	//for (int i = 0; i < M - 1; i++) {
 	//	PointInfo p1 = *(codeLevelInfo->module_position + i);
@@ -731,7 +708,7 @@ Grade_t evaluate_dm_print_growth_grade(CodeLevelInfo* codeLevelInfo)
 	//	if (!rc) return GRADE_ERR;
 	//}
 	// 2¡¢¼ÆËãµ×²¿´òÓ¡Ôö³¤ÂÊ
-	for (int i = 0; i < M - 1; i++) {
+	for (i = 0; i < M - 1; i++) {
 		PointInfo p1 = *(codeLevelInfo->module_position + (N - 1) * M + i);
 		PointInfo p2 = *(codeLevelInfo->module_position + (N - 1) * M + i + 1);
 		rc = get_growth_value(&codeLevelInfo->img, p1, p2, &gray1.s0, &gray1.s1);
@@ -745,7 +722,7 @@ Grade_t evaluate_dm_print_growth_grade(CodeLevelInfo* codeLevelInfo)
 	//	get_growth_value(&codeLevelInfo->img, p1, p2, &gray2.s0, &gray2.s1);
 	//}
 	// 4¡¢¼ÆËãÓÒ²à´òÓ¡Ôö³¤ÂÊ
-	for (int n = 0; n < N - 1; n++)
+	for (n = 0; n < N - 1; n++)
 	{
 		PointInfo p1 = *(codeLevelInfo->module_position + n * M + M - 1);
 		PointInfo p2 = *(codeLevelInfo->module_position + (n + 1) * M + M - 1);
@@ -756,7 +733,7 @@ Grade_t evaluate_dm_print_growth_grade(CodeLevelInfo* codeLevelInfo)
 	//double v3 = abs(1 - abs((gray3.s0 + gray3.s1) / 2 - gray3.s0) / abs((gray3.s0 + gray3.s1) / 2 - gray3.s1));
 	//double value = v1 > v3 ? v1 : v3;
 	double value = gray1.s0 < gray3.s0 ? gray1.s0 : gray3.s0;
-	if (value > 0.85) {
+	if (value > 0.80) {
 		return GRADE_A;
 	}
 	else if (value > 0.7) {
@@ -799,10 +776,10 @@ int get_ave_gray_value_of_points(iMat *img, const Point p1, const Point p2, cons
 
 	int brightness_max = BRIGHTNESS_MAX;
 	int brightness_min = BRIGHTNESS_MIN;
-
-	for (int y = y_start; y <= y_end; y++)
+	int x = 0, y = 0;
+	for (y = y_start; y <= y_end; y++)
 	{
-		for (int x = x_start; x <= x_end; x++)
+		for (x = x_start; x <= x_end; x++)
 		{
 			Point p = { x, y };
 			if (!is_point_in_polygon(p, polygon, n))
@@ -810,7 +787,7 @@ int get_ave_gray_value_of_points(iMat *img, const Point p1, const Point p2, cons
 				continue;
 			}
 			int index = y * img->cols + x;
-			if (index < img->cols * img->rows)
+			if (index < (int)(img->cols * img->rows))
 			{
 				num++;
 				gray_total += img->data[index];
@@ -839,10 +816,11 @@ double get_module_width(CodeLevelInfo* codeLevelInfo)
 int get_ave_gray_value_of_line(iMat* img, Point p1, Point p2, double* ave_gray)
 {
 	double t, distance = calculate_distance(p1.x, p1.y, p2.x, p2.y) / 2;
-	int dx = abs(p1.x - p2.x);
-	int dy = abs(p1.y - p2.y);
+	int dx = abs((int)(p1.x - p2.x));
+	int dy = abs((int)(p1.y - p2.y));
 	int step = dx >= dy ? dx : dy;
-	for (int i = 0; i <= step; i++) {
+	int i = 0;
+	for (i = 0; i <= step; i++) {
 		t = (double)i / step;
 		int x = (int)(p1.x + t * (p2.x - p1.x));
 		int y = (int)(p1.y + t * (p2.y - p1.y));
@@ -852,14 +830,14 @@ int get_ave_gray_value_of_line(iMat* img, Point p1, Point p2, double* ave_gray)
 	return 1;
 }
 
-int get_margin_target_point(iMat* img, Point p1, Point p2, int scale, int ori/*·½Ïò*/, Point* targetP)
+int get_margin_target_point(iMat* img, Point p1, Point p2, double scale, int ori/*·½Ïò*/, Point* targetP)
 {
 	double distance = calculate_distance(p1.x, p1.y, p2.x, p2.y);
 	double dx = ori ? (p1.x - p2.x) / distance : (p2.x - p1.x) / distance;
 	double dy = ori ? (p1.y - p2.y) / distance : (p2.y - p1.y) / distance;
-	int x = p1.x + dx * scale;
-	int y = p1.y + dy * scale;
-	if (x > img->cols || x < 0 || y > img->rows || y < 0) {
+	int x = (int)(p1.x + dx * scale);
+	int y = (int)(p1.y + dy * scale);
+	if (x > (int)img->cols || x < 0 || y > (int)img->rows || y < 0) {
 		return 0;
 	}
 	targetP->x = x;
@@ -869,21 +847,22 @@ int get_margin_target_point(iMat* img, Point p1, Point p2, int scale, int ori/*·
 
 
 
-int get_avgage_gray_expand(iMat* img, Point p1, Point p2, Point p3, Point p4, Point p_set[],int n)
+double get_avgage_gray_expand(iMat* img, Point p1, Point p2, Point p3, Point p4, Point p_set[],int n)
 {
 	int x_start = get_min_max_coord(p1.x, p2.x, p3.x, p4.x, 0);
 	int x_end = get_min_max_coord(p1.x, p2.x, p3.x, p4.x, 1);
 	int y_start = get_min_max_coord(p1.y, p2.y, p3.y, p4.y, 0);
 	int y_end = get_min_max_coord(p1.y, p2.y, p3.y, p4.y, 1);
 	int count_num = 0, sum_gray = 0;
-	for (int r = y_start; r < y_end; r++)
+	int r = 0, c = 0;
+	for (r = y_start; r < y_end; r++)
 	{
-		for (int c = x_start; c < x_end; c++)
+		for (c = x_start; c < x_end; c++)
 		{
 			Point p = { c, r };
 			if (!is_point_in_polygon(p, p_set, n)) continue;
 			int index = r * img->cols + c;
-			if (index < img->cols * img->rows)
+			if (index < (int)(img->cols * img->rows))
 			{
 				count_num++;
 				sum_gray += img->data[index];
@@ -911,7 +890,7 @@ Grade_t evaluate_margin_grade(CodeLevelInfo* codeLevelInfo, double* val)
 	avg_white = gt + sc / 2;
 	double compare_ratio = 0, compare_gray = 0;
 	module_w = get_module_width(codeLevelInfo);
-	int scale = 4;
+	double scale = 4;
 	Point p1 = { codeLevelInfo->position[0][0] , codeLevelInfo->position[0][1] };
 	Point p2 = { codeLevelInfo->position[1][0] , codeLevelInfo->position[1][1] };
 	Point p3 = { codeLevelInfo->position[2][0] , codeLevelInfo->position[2][1] };
@@ -960,15 +939,15 @@ Grade_t evaluate_margin_grade(CodeLevelInfo* codeLevelInfo, double* val)
 	{
 		return GRADE_A;
 	}
-	else if (compare_ratio > 0.6)
+	else if (compare_ratio > 0.7)
 	{
 		return GRADE_B;
 	}
-	else if (compare_ratio > 0.45)
+	else if (compare_ratio > 0.6)
 	{
 		return GRADE_C;
 	}
-	else if (compare_ratio > 0.3)
+	else if (compare_ratio > 0.5)
 	{
 		return GRADE_D;
 	}
@@ -1037,10 +1016,7 @@ Grade_t evaluate_dimension_grade(CodeLevelInfo* codeLevelInfo, double* val)
 /******************************** 11¡¢Ñ­»·½âÂë´ÎÊý ***********************************/
 Grade_t evaluate_decode_cycle_grade(CodeLevelInfo* codeLevelInfo, double* val)
 {
-	if (codeLevelInfo->cycle_decode == 1) {
-		return GRADE_A;
-	}
-	return GRADE_ERR;
+	return GRADE_A;
 }
 
 /******************************** 12¡¢ÄæÏò´¦Àí ***********************************/
@@ -1049,15 +1025,15 @@ Grade_t get_inverse_decode_grade(CodeLevelInfo* codeLevelInfo)
 	return codeLevelInfo->decoder_type == 2 ? GRADE_F : GRADE_A;
 }
 
-int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
+Grade_t evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 {
 	double val = 0;
-	int grade = 0;
-	int cur_min_gradle = GRADE_A;
+	Grade_t grade = GRADE_A;
+	Grade_t cur_min_gradle = GRADE_A;
 	codeLevelInfo->light_type = 1;
 	// 1¡¢½âÂëµÈ¼¶
 	grade = evaluate_decode_grade(codeLevelInfo->length);
-	printf("1¡¢evaluate_decode_grade grade = %d \n", grade);
+	//printf("1¡¢evaluate_decode_grade grade = %d \n", grade);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1066,7 +1042,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 12¡¢ÄæÏò´¦Àí
 	grade = get_inverse_decode_grade(codeLevelInfo);
-	printf("12¡¢get_inverse_decode_grade grade = %d \n", grade);
+	//printf("12¡¢get_inverse_decode_grade grade = %d \n", grade);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1075,7 +1051,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 2¡¢×Ö·û¶Ô±È¶ÈµÈ¼¶
 	grade = evaluate_symbol_contrast_grade(codeLevelInfo, &val);
-	printf("2¡¢evaluate_symbol_contrast_grade grade = %d,value = %f \n", grade, val);
+	//printf("2¡¢evaluate_symbol_contrast_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1084,7 +1060,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 3¡¢Öá·Ç¾ùÒ»ÐÔ
 	grade = evaluate_axial_nonuniformity_grade(codeLevelInfo, &val);
-	printf("3¡¢evaluate_axial_nonuniformity_grade grade = %d,value = %f \n", grade, val);
+	//printf("3¡¢evaluate_axial_nonuniformity_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1093,7 +1069,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 4¡¢·Ç¾ùÔÈÍø¸ñ
 	grade = evaluate_grid_nonuniformity_grade(codeLevelInfo, &val);
-	printf("4¡¢evaluate_grid_nonuniformity_grade grade = %d,value = %f \n", grade, val);
+	//printf("4¡¢evaluate_grid_nonuniformity_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1102,7 +1078,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 5¡¢µ÷ÖÆÄÜÁ¦
 	grade = evaluate_modulation_grade(codeLevelInfo, &val);
-	printf("5¡¢evaluate_modulation_grade grade = %d,value = %f \n", grade, val);
+	//printf("5¡¢evaluate_modulation_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1111,7 +1087,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 6¡¢Ñ°ÏñÍ¼°¸Ëð»µ
 	grade = evaluate_fixed_pattern_damage(codeLevelInfo, &val);
-	printf("6¡¢evaluate_fixed_pattern_damage grade = %d,value = %f \n", grade, val);
+	//printf("6¡¢evaluate_fixed_pattern_damage grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1120,7 +1096,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 7¡¢Î´Ê¹ÓÃµÄÎó²îÐ£Õý
 	grade = evaluate_unused_error_correction_grage(codeLevelInfo, &val);
-	printf("7¡¢evaluate_unused_error_correction_grage grade = %d,value = %f \n", grade, val);
+	//printf("7¡¢evaluate_unused_error_correction_grage grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1129,7 +1105,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 8¡¢´òÓ¡±ä»¯
 	grade = evaluate_print_growth_grade(codeLevelInfo);
-	printf("8¡¢evaluate_print_growth_grade grade = %d,value = %f \n", grade, val);
+	//printf("8¡¢evaluate_print_growth_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1138,7 +1114,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 9¡¢¾²Çø
 	grade = evaluate_margin_grade(codeLevelInfo, &val);
-	printf("9¡¢evaluate_margin_grade grade = %d,value = %f \n", grade, val);
+	//printf("9¡¢evaluate_margin_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1147,7 +1123,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 10¡¢ÌõÂë³ß´ç
 	grade = evaluate_dimension_grade(codeLevelInfo, &val);
-	printf("10¡¢evaluate_dimension_grade grade = %d,value = %f \n", grade, val);
+	//printf("10¡¢evaluate_dimension_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
@@ -1156,7 +1132,7 @@ int evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	}
 	// 11¡¢Ñ­»·½âÂë´ÎÊý
 	grade = evaluate_decode_cycle_grade(codeLevelInfo, &val);
-	printf("11¡¢evaluate_decode_cycle_grade grade = %d,value = %f \n", grade, val);
+	//printf("11¡¢evaluate_decode_cycle_grade grade = %d,value = %f \n", grade, val);
 	if (grade == GRADE_F) {
 		return grade;
 	}
