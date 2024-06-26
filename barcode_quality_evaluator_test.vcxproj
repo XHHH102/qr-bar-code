@@ -166,6 +166,7 @@
     <Image Include="test_tr_1.bmp" />
     <Image Include="test_tr_2.bmp" />
     <Image Include="test_tr_3.bmp" />
+    <Image Include="test_tr_4.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

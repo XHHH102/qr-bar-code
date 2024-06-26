@@ -51,7 +51,7 @@ int main()
 		printf("iMat_createZero err");
 		return -1;
 	}
-	if (!iMat_readImage(img, "D:/Ccode/barcode_quality_evaluator_test/barcode_quality_evaluator_test/test_dm_2.bmp")) {
+	if (!iMat_readImage(img, "D:/Ccode/barcode_quality_evaluator_test/barcode_quality_evaluator_test/test_tr_4.bmp")) {
 		printf("Mat_readImage err");
 		return -1;
 	}
@@ -77,7 +77,8 @@ int main()
 	//MOS_selectRegion(scanner, 460, 280, 175, 175);
 	//MOS_selectRegion(scanner, 500, 500, 150, 150);
 	//MOS_selectRegion(scanner, 660, 205, 150, 150);
-	MOS_selectRegion(scanner, 130, 60, 200, 200);
+	//MOS_selectRegion(scanner, 130, 60, 200, 200);
+	MOS_selectRegion(scanner, 680, 0, 120, 120);
 
 	int ncode = MOS_decode(scanner);
 	img = iMat_destroy(img);

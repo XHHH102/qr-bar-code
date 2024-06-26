@@ -25,6 +25,29 @@ int get_min_max_coord(const double x1, const double x2, const double x3, const d
 		return temp12 <= temp34 ? temp12 : temp34;
 	}
 }
+/************************* 0、判断码是否完整采集 ******************************/
+Grade_t evaluate_code_good(CodeLevelInfo* codeLevelInfo)
+{
+	int M = codeLevelInfo->code_vision[0];
+	int N = codeLevelInfo->code_vision[1];
+	int i = 0, j = 0;
+	int index_x = 0, index_y = 0, index_data = 0;
+	for (i = 0; i < N; i++)
+	{
+		for (j = 0; j < M; j++)
+		{
+			index_x = codeLevelInfo->module_position[i * M + j].x;
+			index_y = codeLevelInfo->module_position[i * M + j].y;
+			index_data = index_y * codeLevelInfo->img.cols + index_x;
+			if (index_data < 0 || index_data >(int)(codeLevelInfo->img.cols * codeLevelInfo->img.rows))
+			{
+				return GRADE_F;
+			}
+			
+		}
+	}
+	return GRADE_A;
+}
 /**************************** 1、解码 ***********************************/
 /**
  * @description: 判断解码结果等级
@@ -1031,6 +1054,10 @@ Grade_t evaluate_barcode_quality(CodeLevelInfo* codeLevelInfo)
 	Grade_t grade = GRADE_A;
 	Grade_t cur_min_gradle = GRADE_A;
 	codeLevelInfo->light_type = 1;
+	
+	grade = evaluate_code_good(codeLevelInfo);
+	if (grade == GRADE_F)
+		return grade;
 	// 1、解码等级
 	grade = evaluate_decode_grade(codeLevelInfo->length);
 	//printf("1、evaluate_decode_grade grade = %d \n", grade);
